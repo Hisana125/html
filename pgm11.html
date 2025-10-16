@@ -1,0 +1,128 @@
+<html>
+<head>
+<title>Form</title>
+</head>
+<body>
+<h1>STUDENT REGISTRATION FORM</h1>
+<table border="1">
+<form>
+<tr>
+<td>FIRST NAME:</td>
+<td><input type="text" id="fname" name="fname" required></td>
+</tr>
+<tr>
+<td>LAST NAME:</td>
+<td><input type="text" id="lname" name="lname" required></td>
+</tr>
+<tr>
+<td>EMAIL ID:</td>
+<td><input type="email" id="email" name="email" required></td>
+</tr>
+<tr>
+<td>DOB:</td>
+<td><input type="date" id="dob" name="dob" required></td>
+</tr>
+<tr>
+<td>MOBILE NUMBER:</td>
+<td><input type="number" id="number" name="number" maxlength="10" required></td>
+</tr>
+<tr>
+<td>GENDER:</td>
+<td><input type="radio" id="gender" name="gender" r1="male">Male
+<input type="radio" id="gender" name="gender" r1="female">Female</td>
+</tr>
+<tr>
+<td>ADDRESS:</td>
+<td><textarea id="address" name="address" rows="3" cols="25" required></textarea></td>
+</tr>
+<tr>
+<td>CITY:</td>
+<td><input type="text" id="city">(max 30 characters)</td>
+</tr>
+<tr>
+<td>PINCODE:</td>
+<td><input type="number" id="pin" name="pin">(6 digit number)</td>
+</tr>
+<tr>
+<td>STATE:</td>
+<td><input type="text" id="state" name="state"></td>
+</tr>
+<tr>
+<td>COUNTRY:</td>
+<td><input type="text" id="country" name="country"></td>
+</tr>
+<tr>
+<td>HOBBIES:</td>
+<td><input type="checkbox" id="hobbies" name="hobbies" value="Dancing">Dancing
+<input type="checkbox" id="hobbies" name="hobbies" value="Singing">Singing
+<input type="checkbox" id="hobbies" name="hobbies" value="Painting">Painting
+<input type="checkbox" id="hobbies" name="hobbies" value="Other">Other
+<input type="text" id="hobbies" name="hobbies"></td>
+</tr>
+<tr>
+<td>QUALIFICATION:</td>
+<td>
+<table>
+<tr>
+<th>SL NO</th>
+<th>EXAMINATION</th>
+<th>BOARD</th>
+<th>PERCENTAGE</th>
+<th>YEAR OF PASSING</th>
+</tr>
+<tr>
+<td>1</td>
+<td>CLASS X</td>
+<td><input type="text" id="board" name="board"></td>
+<td><input type="number" id="percent" name="percent"></td>
+<td><input type="number" id="year" name="year"></td>
+</tr>
+<tr>
+<td>2</td>
+<td>CLASS XII</td>
+<td><input type="text" id="board" name="board"></td>
+<td><input type="number" id="percent" name="percent"></td>
+<td><input type="number" id="year" name="year"></td>
+</tr>
+<tr>
+<td>3</td>
+<td>DEGREE</td>
+<td><input type="text" id="board" name="board"></td>
+<td><input type="number" id="percent" name="percent"></td>
+<td><input type="number" id="year" name="year"></td>
+</tr>
+<tr>
+<td>4</td>
+<td>MASTERS</td>
+<td><input type="text" id="board" name="board"></td>
+<td><input type="number" id="percent" name="percent"></td>
+<td><input type="number" id="year" name="year"></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td>COURSE APPLIED FOR:</td>
+<td><input type="radio" name="course" id="course" r1="MCA">MCA
+<input type="radio" name="course" id="course" r1="M.Tech">M.Tech
+<input type="radio" name="course" id="course" r1="M.Sc">M.Sc
+<input type="radio" name="course" id="course" r1="Ph.D">Ph.D</td>
+</tr>
+<tr>
+<td>PASSWORD:</td>
+<td><input type="password" name="pass" id="pass">(max 30 characters)</td>
+</tr>
+<tr>
+<td>DATE OF TC:</td>
+<td><input type="date" name="tc" id="tc"></td>
+</tr>
+<tr>
+<td colspan="2" align="center">
+<input type="submit" value="SUBMIT">
+<input type="reset" value="RESET">
+</td>
+</tr>
+</form>
+</table>
+</body>
+</html>

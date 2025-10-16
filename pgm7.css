@@ -1,0 +1,12 @@
+.class-selector{
+background-color:green;
+color:white;
+}
+#id-selector{
+background-color:orange;
+color:red;
+}
+p{
+background-color:grey;
+color:blue;
+}

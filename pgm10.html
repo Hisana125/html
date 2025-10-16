@@ -1,0 +1,52 @@
+<html>
+<head>
+<title>HTML page with navigation bar using CSS</title>
+<style>
+.sidenav a {
+display: block;
+text-decoration: none;
+padding: 6px 8px 6px 16px;
+color: white;
+}
+.sidenav {
+height: 100vh;
+width: 160px;
+padding-top: 20px;
+background-color: green;
+position: fixed;
+top: 0;
+left: 0;
+}
+.sidenav a:hover {
+color: red;
+}
+.main {
+margin-left: 160px;
+padding: 0 10px;
+height: 200vh;
+}
+iframe {
+width: 100%;
+height: 100%;
+border: none;
+}
+</style>
+</head>
+<body>
+<div class="sidenav">
+<a href="about.html" target="content-frame">About Us</a>
+<a href="department.html" target="content-frame">Departments</a>
+<a href="vision.html" target="content-frame">Vision and Mission</a>
+<a href="contact.html" target="content-frame">Contact Us</a>
+</div>
+<div class="main">
+<iframe name="content-frame" src="about.html"></iframe>
+<iframe name="content-frame" src="department.html"></iframe>
+<iframe name="content-frame" src="vision.html"></iframe>
+<iframe name="content-frame" src="contact.html"></iframe>
+</div>
+</body>
+</html>
+
+
+
