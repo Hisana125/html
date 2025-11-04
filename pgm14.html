@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>String and Math Functions in JavaScript</title>
+<style>
+h1,h2{
+color:blue;
+}
+p{
+background-color:#eef3ff;
+padding:12px 16px;
+border-left:5px solid #0a51cc;
+border-radius:6px;
+box-shadow:0 1px 4px rgba(0,0,0,0.1);
+margin-bottom:20px;
+line-height:1.6
+}
+button{
+padding:8px 14px;
+margin-top:10px;
+cursor:pointer;
+background:#0a51cc;
+border:none;
+color:white;
+border-radius:5px;
+transition:0.3s;
+</style>
+<script>
+function showStringFunctions(){
+var text="Hello JavaScript!";
+document.getElementById("strOutput").innerHTML =
+"Original String: "+text+"<br>"+
+"Length: "+text.length+"<br>"+
+"Uppercase: "+text.toUpperCase()+"<br>"+
+"Lowercase: "+text.toLowerCase()+"<br>"+
+"Trimmed: "+text.trim()+"<br>"+
+"Character at 6: "+text.charAt(6)+"<br>"+
+"Index of 'Script': "+text.indexOf("Script")+"<br>"+
+"Replace: "+text.replace("Java","ECMA")+"<br>"+
+"Slice: "+text.slice(1, 5)+"<br>"+
+"Concatenate: "+text.concat(" is awesome!")+"<br>";
+}
+function showMathFunctions(){
+document.getElementById("mathOutput").innerHTML =
+"PI: "+Math.PI+"<br>"+
+"Square Root of 25: "+Math.sqrt(25)+"<br>"+
+"2 raised to power 3: "+Math.pow(2, 3)+"<br>"+
+"|-10|= "+Math.abs(-10)+"<br>"+
+"Ceil(4.3): "+Math.ceil(4.3)+"<br>"+
+"Floor(4.9): "+Math.floor(4.9)+"<br>"+
+"Round(4.5): "+Math.round(4.5)+"<br>"+
+"Random Number(0-1): "+Math.random()+"<br>"+
+"Max(10,20,30): "+Math.max(10,20,30)+"<br>"+
+"Min(10,20,30): "+Math.min(10,20,30)+"<br>";
+}
+</script>
+</head>
+<body>
+<h1>String and Math Functions in JavaScript</h1>
+<h2>1. String Functions</h2>
+<p>
+JavaScript provides many predefined string functions for text manipulation.<br><br>
+// Example String<br>
+<code>let text = "Hello JavaScript!";</code><br><br>
+// Common String Functions<br>
+<code>text.length</code> — Returns string length<br>
+<code>text.toUpperCase()</code> — Converts to uppercase<br>
+<code>text.toLowerCase()</code> — Converts to lowercase<br>
+<code>text.trim()</code> — Removes spaces from both ends<br>
+<code>text.charAt(6)</code> — Returns character at position 6<br>
+<code>text.indexOf("Script")</code> — Finds the position of substring<br>
+<code>text.replace("Java","ECMA")</code> — Replaces text<br>
+<code>text.slice(1,5)</code> — Extracts part of string<br>
+<code>text.concat(" is awesome!")</code> — Joins strings<br>
+</p>
+<button onclick="showStringFunctions()">Run String Functions</button>
+<p id="strOutput"></p>
+<h2>2. Math Functions</h2>
+<p>
+JavaScript's Math object provides mathematical constants and functions.<br><br>
+// Common Math Functions<br>
+<code>Math.PI</code> — Value of π<br>
+<code>Math.sqrt(25)</code> — Square root<br>
+<code>Math.pow(2, 3)</code> — Exponentiation (2³)<br>
+<code>Math.abs(-10)</code> — Absolute value<br>
+<code>Math.ceil(4.3)</code> — Round up<br>
+<code>Math.floor(4.9)</code> — Round down<br>
+<code>Math.round(4.5)</code> — Round to nearest integer<br>
+<code>Math.random()</code> — Random number (0 to 1)<br>
+<code>Math.max(10, 20, 30)</code> — Largest number<br>
+<code>Math.min(10, 20, 30)</code> — Smallest number<br>
+</p>
+<button onclick="showMathFunctions()">Run Math Functions</button>
+<p id="mathOutput"></p>
+</body>
+</html>
+

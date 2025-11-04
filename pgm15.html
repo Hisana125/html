@@ -1,0 +1,187 @@
+<html>
+<head>
+<title>Student Registration Form</title>
+<script>
+function validateForm() {
+    // Get input values
+    let fname = document.getElementById("fname").value.trim();
+    let lname = document.getElementById("lname").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let number = document.getElementById("number").value.trim();
+
+    // Regex patterns
+    let nameRegex = /^[A-Za-z\s]{1,30}$/;
+    let emailRegex = /^[\\w.-]+@[\\w.-]+\\.\\w{2,}$/;
+    let mobileRegex = /^[0-9]{10}$/;
+
+    // Validate first name
+    if (!nameRegex.test(fname)) {
+        alert("❌ Please enter a valid First Name (only letters, max 30 characters).");
+        return false;
+    }
+
+    // Validate last name
+    if (!nameRegex.test(lname)) {
+        alert("❌ Please enter a valid Last Name (only letters, max 30 characters).");
+        return false;
+    }
+
+    // Validate email
+    if (!emailRegex.test(email)) {
+        alert("❌ Please enter a valid Email address.");
+        return false;
+    }
+
+    // Validate mobile number
+    if (!mobileRegex.test(number)) {
+        alert("❌ Please enter a valid 10-digit Mobile Number.");
+        return false;
+    }
+
+    alert("✅ Form submitted successfully!");
+    return true;
+}
+</script>
+</head>
+<body>
+<h1>STUDENT REGISTRATION FORM</h1>
+<form onsubmit="return validateForm()">
+<table border="1">
+<tr>
+<td>FIRST NAME</td>
+<td><input type="text" id="fname" name="fname" maxlength="30" required> (max 30 characters)</td>
+</tr>
+<tr>
+<td>LAST NAME</td>
+<td><input type="text" id="lname" name="lname" maxlength="30" required> (max 30 characters)</td>
+</tr>
+<tr>
+<td>EMAIL ID</td>
+<td><input type="email" id="email" name="email" required></td>
+</tr>
+<tr>
+<td>DATE OF BIRTH</td>
+<td><input type="date" id="dob" name="dob" required></td>
+</tr>
+<tr>
+<td>MOBILE NUMBER</td>
+<td><input type="tel" id="number" name="number" pattern="[0-9]{10}" maxlength="10" required> (10 digits)</td>
+</tr>
+<tr>
+<td>GENDER</td>
+<td>
+<input type="radio" id="male" name="gender" value="Male" required> Male
+<input type="radio" id="female" name="gender" value="Female"> Female
+</td>
+</tr>
+<tr>
+<td>ADDRESS</td>
+<td><textarea id="address" name="address" rows="3" cols="25" required></textarea></td>
+</tr>
+<tr>
+<td>CITY</td>
+<td><input type="text" id="city" name="city" maxlength="30"> (max 30 characters)</td>
+</tr>
+<tr>
+<td>PINCODE</td>
+<td><input type="text" id="pin" name="pin" pattern="[0-9]{6}" maxlength="6"> (6 digit number)</td>
+</tr>
+<tr>
+<td>STATE</td>
+<td><input type="text" id="state" name="state" maxlength="30"> (max 30 characters)</td>
+</tr>
+<tr>
+<td>COUNTRY</td>
+<td><input type="text" id="country" name="country" value="India"></td>
+</tr>
+<tr>
+<td>HOBBIES</td>
+<td>
+<input type="checkbox" name="hobbies" value="Drawing"> Drawing
+<input type="checkbox" name="hobbies" value="Swimming"> Swimming
+<input type="checkbox" name="hobbies" value="Singing"> Singing
+<input type="checkbox" name="hobbies" value="Others"> Others 
+<input type="text" name="otherHobby" placeholder="Specify if others">
+</td>
+</tr>
+<tr>
+<td>QUALIFICATION</td>
+<td>
+<table>
+<tr>
+<th>SL NO.</th>
+<th>EXAMINATION</th>
+<th>BOARD</th>
+<th>PERCENTAGE</th>
+<th>YEAR OF PASSING</th>
+</tr>
+<tr>
+<td>1</td>
+<td>Class X</td>
+<td><input type="text" name="board1" maxlength="10"></td>
+<td><input type="number" name="percent1" step="0.01" min="0" max="100"></td>
+<td><input type="number" name="year1" min="1900" max="2099"></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Class XII</td>
+<td><input type="text" name="board2" maxlength="10"></td>
+<td><input type="number" name="percent2" step="0.01" min="0" max="100"></td>
+<td><input type="number" name="year2" min="1900" max="2099"></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Degree</td>
+<td><input type="text" name="board3" maxlength="10"></td>
+<td><input type="number" name="percent3" step="0.01" min="0" max="100"></td>
+<td><input type="number" name="year3" min="1900" max="2099"></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Masters</td>
+<td><input type="text" name="board4" maxlength="10"></td>
+<td><input type="number" name="percent4" step="0.01" min="0" max="100"></td>
+<td><input type="number" name="year4" min="1900" max="2099"></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td class="note">(10 characters max)</td>
+<td class="note">(Upto 2 decimal)</td>
+<td></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td>COURSE APPLIED FOR</td>
+<td>
+<input type="radio" name="course" value="MCA" required> MCA
+<input type="radio" name="course" value="M.Tech"> M.Tech
+<input type="radio" name="course" value="M.Sc"> M.Sc
+<input type="radio" name="course" value="Ph.D"> Ph.D
+</td>
+</tr>
+<tr>
+<td>TYPE YOUR PASSWORD</td>
+<td><input type="password" name="pass" id="pass" maxlength="30" required> (max 30 characters)</td>
+</tr>
+<tr>
+<td>UPLOAD YOUR PHOTO</td>
+<td><input type="file" name="photo" id="photo" accept="image/*" required></td>
+</tr>
+<tr>
+<td>DATE OF TC</td>
+<td><input type="date" name="tc" id="tc"></td>
+</tr>
+<tr>
+<td colspan="2" align="center">
+<input type="submit" value="SUBMIT">
+<input type="reset" value="RESET">
+</td>
+</tr>
+</table>
+</form>
+</body>
+</html>
+

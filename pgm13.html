@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>Light Bulb On/Off</title>
+<style>
+body{
+text-align:center;
+padding-top:80px;
+font-family:Arial,sans-serif;
+}
+img{
+width:150px;
+height:250px;
+margin-bottom:20px;
+}
+button{
+padding:10px 20px;
+font-size:18px;
+cursor:pointer;
+border-radius:10px;
+margin:5px;
+}
+</style>
+</head>
+<body>
+<img id="bulb" src="https://www.w3schools.com/js/pic_bulboff.gif" alt="Light Bulb">
+<br>
+<button id="onBtn">Turn ON</button>
+<button id="offBtn">Turn OFF</button>
+<script>
+const bulb= document.getElementById("bulb");
+const onBtn = document.getElementById("onBtn");
+const offBtn = document.getElementById("offBtn");
+onBtn.addEventListener("click",function(){
+bulb.src="https://www.w3schools.com/js/pic_bulbon.gif";
+});
+offBtn.addEventListener("click",function(){
+bulb.src = "https://www.w3schools.com/js/pic_bulboff.gif";
+});
+</script>
+</body>
+</html>
+
