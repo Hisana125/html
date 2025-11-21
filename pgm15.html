@@ -2,39 +2,173 @@
 <head>
 <title>Student Registration Form</title>
 <script>
+// Disable future dates for DOB and TC
+window.onload = function() {
+    let today = new Date().toISOString().split("T")[0];
+    document.getElementById("dob").setAttribute("max", today);
+    document.getElementById("tc").setAttribute("max", today);
+};
+
 function validateForm() {
-    // Get input values
+    // Get all input values
     let fname = document.getElementById("fname").value.trim();
     let lname = document.getElementById("lname").value.trim();
     let email = document.getElementById("email").value.trim();
     let number = document.getElementById("number").value.trim();
+    let dob = document.getElementById("dob").value;
+    let tc = document.getElementById("tc").value;
+    let address = document.getElementById("address").value.trim();
+    let city = document.getElementById("city").value.trim();
+    let pin = document.getElementById("pin").value.trim();
+    let state = document.getElementById("state").value.trim();
+    let country = document.getElementById("country").value.trim();
+    let pass = document.getElementById("pass").value.trim();
+    let photo = document.getElementById("photo").value;
 
     // Regex patterns
     let nameRegex = /^[A-Za-z\s]{1,30}$/;
-    let emailRegex = /^[\\w.-]+@[\\w.-]+\\.\\w{2,}$/;
+    let emailRegex = /^[\w.-]+@[\w.-]+\.\w{2,}$/;
     let mobileRegex = /^[0-9]{10}$/;
+    let pinRegex = /^[0-9]{6}$/;
+    let percentRegex = /^(100(\.00?)?|[0-9]{1,2}(\.[0-9]{1,2})?)$/; // 0–100, 2 decimals
+    let yearRegex = /^[0-9]{4}$/;
 
-    // Validate first name
+    // First & Last Name
     if (!nameRegex.test(fname)) {
         alert("❌ Please enter a valid First Name (only letters, max 30 characters).");
         return false;
     }
-
-    // Validate last name
     if (!nameRegex.test(lname)) {
         alert("❌ Please enter a valid Last Name (only letters, max 30 characters).");
         return false;
     }
 
-    // Validate email
+    // Email & Mobile
     if (!emailRegex.test(email)) {
-        alert("❌ Please enter a valid Email address.");
+        alert("❌ Invalid Email address.");
+        return false;
+    }
+    if (!mobileRegex.test(number)) {
+        alert("❌ Enter a valid 10-digit Mobile Number.");
         return false;
     }
 
-    // Validate mobile number
-    if (!mobileRegex.test(number)) {
-        alert("❌ Please enter a valid 10-digit Mobile Number.");
+    // DOB
+    if (dob === "") {
+        alert("❌ Please select Date of Birth.");
+        return false;
+    }
+    let dobDate = new Date(dob);
+    let today = new Date();
+    if (dobDate >= today) {
+        alert("❌ Date of Birth cannot be today or a future date.");
+        return false;
+    }
+
+    // TC Date
+    if (tc !== "") {
+        let tcDate = new Date(tc);
+        if (tcDate > today) {
+            alert("❌ Date of TC cannot be in the future.");
+            return false;
+        }
+    }
+
+    // Gender
+    if (!document.querySelector('input[name="gender"]:checked')) {
+        alert("❌ Please select Gender.");
+        return false;
+    }
+
+    // Address & City
+    if (address.length < 5) {
+        alert("❌ Address should have at least 5 characters.");
+        return false;
+    }
+    if (city !== "" && !nameRegex.test(city)) {
+        alert("❌ Invalid City name.");
+        return false;
+    }
+
+    // Pincode, State, Country
+    if (pin !== "" && !pinRegex.test(pin)) {
+        alert("❌ Pincode must be 6 digits.");
+        return false;
+    }
+    if (state !== "" && !nameRegex.test(state)) {
+        alert("❌ Invalid State name.");
+        return false;
+    }
+    if (country === "") {
+        alert("❌ Please enter Country name.");
+        return false;
+    }
+
+    // Hobbies
+    if (document.querySelectorAll('input[name="hobbies"]:checked').length === 0) {
+        alert("❌ Please select at least one Hobby.");
+        return false;
+    }
+
+    // Qualification check (Class X mandatory)
+    let board1 = document.getElementsByName("board1")[0].value.trim();
+    let percent1 = document.getElementsByName("percent1")[0].value.trim();
+    let year1 = document.getElementsByName("year1")[0].value.trim();
+
+    if (board1 === "" || percent1 === "" || year1 === "") {
+        alert("❌ Please fill all details for Class X.");
+        return false;
+    }
+
+    // Validate percentages
+    let percentFields = document.querySelectorAll('input[name^="percent"]');
+    for (let p of percentFields) {
+        let val = p.value.trim();
+        if (val !== "" && !percentRegex.test(val)) {
+            alert("❌ Invalid Percentage! Must be ≤100 and up to 2 decimal places.");
+            return false;
+        }
+    }
+
+    // Validate year of passing
+    let yearFields = document.querySelectorAll('input[name^="year"]');
+    let currentYear = new Date().getFullYear();
+    for (let y of yearFields) {
+        let val = y.value.trim();
+        if (val !== "") {
+            if (!yearRegex.test(val)) {
+                alert("❌ Invalid Year of Passing! Enter a 4-digit year.");
+                return false;
+            }
+            if (val > currentYear) {
+                alert("❌ Year of Passing cannot be in the future.");
+                return false;
+            }
+
+            // Logical check: must be at least 10 years after DOB
+            let minPassingYear = dobDate.getFullYear() + 10;
+            if (val < minPassingYear) {
+                alert(`❌ Year of Passing (${val}) seems too early based on DOB (${dobDate.getFullYear()}).`);
+                return false;
+            }
+        }
+    }
+
+    // Course
+    if (!document.querySelector('input[name="course"]:checked')) {
+        alert("❌ Please select a Course.");
+        return false;
+    }
+
+    // Password
+    if (pass.length < 6 || pass.length > 30) {
+        alert("❌ Password must be between 6 and 30 characters.");
+        return false;
+    }
+
+    // Photo
+    if (photo === "") {
+        alert("❌ Please upload a Photo.");
         return false;
     }
 
@@ -42,11 +176,15 @@ function validateForm() {
     return true;
 }
 </script>
+
+
 </head>
+
 <body>
 <h1>STUDENT REGISTRATION FORM</h1>
+
 <form onsubmit="return validateForm()">
-<table border="1">
+<table border="1" cellpadding="5" cellspacing="0">
 <tr>
 <td>FIRST NAME</td>
 <td><input type="text" id="fname" name="fname" maxlength="30" required> (max 30 characters)</td>
@@ -84,11 +222,11 @@ function validateForm() {
 </tr>
 <tr>
 <td>PINCODE</td>
-<td><input type="text" id="pin" name="pin" pattern="[0-9]{6}" maxlength="6"> (6 digit number)</td>
+<td><input type="text" id="pin" name="pin" pattern="[0-9]{6}" maxlength="6"> (6 digits)</td>
 </tr>
 <tr>
 <td>STATE</td>
-<td><input type="text" id="state" name="state" maxlength="30"> (max 30 characters)</td>
+<td><input type="text" id="state" name="state" maxlength="30"></td>
 </tr>
 <tr>
 <td>COUNTRY</td>
@@ -107,7 +245,7 @@ function validateForm() {
 <tr>
 <td>QUALIFICATION</td>
 <td>
-<table>
+<table border="1">
 <tr>
 <th>SL NO.</th>
 <th>EXAMINATION</th>
@@ -143,13 +281,6 @@ function validateForm() {
 <td><input type="number" name="percent4" step="0.01" min="0" max="100"></td>
 <td><input type="number" name="year4" min="1900" max="2099"></td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-<td class="note">(10 characters max)</td>
-<td class="note">(Upto 2 decimal)</td>
-<td></td>
-</tr>
 </table>
 </td>
 </tr>
@@ -163,11 +294,11 @@ function validateForm() {
 </td>
 </tr>
 <tr>
-<td>TYPE YOUR PASSWORD</td>
-<td><input type="password" name="pass" id="pass" maxlength="30" required> (max 30 characters)</td>
+<td>PASSWORD</td>
+<td><input type="password" name="pass" id="pass" maxlength="30" required> (6–30 characters)</td>
 </tr>
 <tr>
-<td>UPLOAD YOUR PHOTO</td>
+<td>UPLOAD PHOTO</td>
 <td><input type="file" name="photo" id="photo" accept="image/*" required></td>
 </tr>
 <tr>

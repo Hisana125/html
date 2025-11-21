@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Online Exam - Demo</title>
+<style>
+  :root{--brand:#0b69ff;--muted:#666}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;background:#f5f7fb;color:#222}
+  .container{max-width:900px;margin:30px auto;background:#fff;border-radius:10px;box-shadow:0 6px 24px rgba(10,20,40,0.08);overflow:hidden}
+  header{padding:18px 24px;background:linear-gradient(90deg,var(--brand),#3aa0ff);color:#fff}
+  header h1{margin:0;font-size:20px}
+  .body{display:flex;gap:0;flex-wrap:wrap}
+  .sidebar{width:220px;border-right:1px solid #eee;padding:18px}
+  .main{flex:1;padding:20px}
+  .meta{font-size:14px;color:#fff;opacity:0.95}
+  .start-screen{padding:20px;text-align:center}
+  .btn{display:inline-block;padding:8px 14px;border-radius:8px;border:none;background:var(--brand);color:#fff;cursor:pointer}
+  .btn.secondary{background:#eee;color:#222}
+  .q-card{background:#fcfdff;border:1px solid #eef3ff;padding:16px;border-radius:8px;margin-bottom:12px}
+  .options{margin-top:12px}
+  .option{display:block;padding:10px;border-radius:6px;border:1px solid #e6e9f2;margin-bottom:8px;cursor:pointer}
+  .option input{margin-right:8px}
+  .controls{display:flex;gap:8px;align-items:center;margin-top:16px}
+  .nav-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:14px}
+  .q-btn{padding:8px;border-radius:6px;background:#fafafa;border:1px solid #ddd;cursor:pointer}
+  .q-btn.answered{background:#e8fff0;border-color:#6ed58f}
+  .q-btn.review{background:#fff7e6;border-color:#ffcc66}
+  .timer{font-weight:700;color:#b00}
+  .results{padding:18px}
+  .correct{color:green;font-weight:600}
+  .wrong{color:#c33;font-weight:700}
+  footer{padding:12px 18px;background:#fbfbfb;border-top:1px solid #eee;text-align:center;color:var(--muted);font-size:13px}
+  @media(max-width:700px){.sidebar{display:none}.main{padding:14px}}
+</style>
+</head>
+<body>
+<div class="container" role="application" aria-labelledby="examTitle">
+  <header>
+    <h1 id="examTitle">Online Exam — Demo</h1>
+    <div class="meta">Pro-tip: answers are saved locally. Don't refresh during submission.</div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar" aria-label="Sidebar">
+      <div style="margin-bottom:12px">
+        <strong>Time left:</strong>
+        <div class="timer" id="timer">--:--</div>
+      </div>
+
+      <div>
+        <strong>Progress</strong>
+        <div id="progressText">0 / 0 answered</div>
+      </div>
+
+      <div style="margin-top:10px">
+        <button class="btn" id="btn-start">Start Exam</button>
+        <button class="btn secondary" id="btn-reset" title="Clear saved responses">Reset</button>
+      </div>
+
+      <hr style="margin:12px 0" />
+
+      <div>
+        <strong>Question map</strong>
+        <div class="nav-grid" id="questionMap" aria-label="Question map"></div>
+      </div>
+    </aside>
+
+    <main class="main" id="main">
+      <!-- Start screen -->
+      <div class="start-screen" id="startScreen">
+        <h2>Ready to start?</h2>
+        <p>Exam duration <select id="durationSelect">
+          <option value="5">5 minutes</option>
+          <option value="10" selected>10 minutes</option>
+          <option value="15">15 minutes</option>
+          <option value="30">30 minutes</option>
+        </select></p>
+        <p><button class="btn" id="startBtn">Start Exam</button></p>
+        <p style="color:var(--muted)">Click start to begin the timer. You can navigate between questions and mark for review.</p>
+      </div>
+
+      <!-- Exam area -->
+      <div id="examArea" style="display:none">
+        <div class="q-card" id="qCard" aria-live="polite"></div>
+
+        <div class="controls" role="toolbar">
+          <button class="btn secondary" id="prevBtn">Previous</button>
+          <button class="btn secondary" id="nextBtn">Next</button>
+          <button class="btn secondary" id="markBtn">Mark for Review</button>
+          <button class="btn secondary" id="clearBtn">Clear Answer</button>
+          <div style="flex:1"></div>
+          <button class="btn" id="submitBtn">Submit Exam</button>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="results" style="display:none" class="results" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <footer>Online Exam Demo • Local only • Hisana</footer>
+</div>
+
+<script>
+/* ----------------------------
+   CONFIGURE QUESTIONS HERE
+   ---------------------------- */
+const questions = [
+  {
+    id: 1,
+    q: "Which of the following is not a JavaScript data type?",
+    type: "mcq",
+    choices: ["String", "Number", "Boolean", "Character"],
+    answerIndex: 3
+  },
+  {
+    id: 2,
+    q: "What is the output of: console.log(typeof null);",
+    type: "mcq",
+    choices: ["'object'", "'null'", "'undefined'", "'number'"],
+    answerIndex: 0
+  },
+  {
+    id: 3,
+    q: "Select all prime numbers below (multi-select)",
+    type: "multi",
+    choices: ["2","3","4","5","6"],
+    answerIndexes: [0,1,3] // 2,3,5
+  },
+  {
+    id: 4,
+    q: "Short answer: What does 'DOM' stand for?",
+    type: "text",
+    answerText: "Document Object Model"
+  },
+  {
+    id: 5,
+    q: "Which HTML tag is used to include JavaScript?",
+    type: "mcq",
+    choices: ["<script>", "<js>", "<javascript>", "<code>"],
+    answerIndex: 0
+  }
+];
+
+/* ----------------------------
+   State & localStorage keys
+   ---------------------------- */
+const STORAGE_KEY = "online_exam_demo_state_v1";
+
+let state = {
+  durationMin: 10,
+  started: false,
+  startTimestamp: null,
+  remainingSeconds: null,
+  currentIndex: 0,
+  answers: {},           // {questionId: answer} answer depends on type
+  review: {}             // {questionId: true}
+};
+
+/* ----------------------------
+   Element refs
+   ---------------------------- */
+const qCard = document.getElementById("qCard");
+const questionMap = document.getElementById("questionMap");
+const progressText = document.getElementById("progressText");
+const timerEl = document.getElementById("timer");
+const startScreen = document.getElementById("startScreen");
+const examArea = document.getElementById("examArea");
+const resultsEl = document.getElementById("results");
+
+/* Buttons */
+document.getElementById("startBtn").addEventListener("click", startExam);
+document.getElementById("btn-start").addEventListener("click", startExam);
+document.getElementById("btn-reset").addEventListener("click", resetSavedState);
+document.getElementById("prevBtn").addEventListener("click", () => changeQuestion(-1));
+document.getElementById("nextBtn").addEventListener("click", () => changeQuestion(1));
+document.getElementById("markBtn").addEventListener("click", toggleMark);
+document.getElementById("clearBtn").addEventListener("click", clearAnswer);
+document.getElementById("submitBtn").addEventListener("click", submitExam);
+
+/* Timer handle */
+let timerHandle = null;
+
+/* ----------------------------
+   Initialization
+   ---------------------------- */
+function init() {
+  loadState();
+  renderQuestionMap();
+  renderProgress();
+  if (state.started) {
+    showExam();
+    startTimerFromState();
+    renderQuestion(state.currentIndex);
+  }
+}
+init();
+
+/* ----------------------------
+   Persistence helpers
+   ---------------------------- */
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try {
+      const s = JSON.parse(raw);
+      // Merge into default state
+      state = Object.assign(state, s);
+    } catch(e) { console.warn("Failed to parse saved state", e); }
+  }
+}
+function resetSavedState(){
+  if (!confirm("Clear saved progress? This can't be undone.")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+/* ----------------------------
+   Start / UI toggles
+   ---------------------------- */
+function startExam() {
+  if (state.started) return;
+  const sel = document.getElementById("durationSelect");
+  state.durationMin = parseInt(sel.value, 10) || 10;
+  state.started = true;
+  state.startTimestamp = Date.now();
+  state.remainingSeconds = state.durationMin * 60;
+  state.currentIndex = 0;
+  saveState();
+  showExam();
+  startTimer();
+  renderQuestion(0);
+}
+
+function showExam() {
+  startScreen.style.display = "none";
+  examArea.style.display = "";
+  resultsEl.style.display = "none";
+  // protect against accidental leave
+  window.addEventListener("beforeunload", beforeUnloadHandler);
+}
+
+/* ----------------------------
+   Timer
+   ---------------------------- */
+function startTimer() {
+  if (timerHandle) clearInterval(timerHandle);
+  timerHandle = setInterval(() => {
+    state.remainingSeconds--;
+    if (state.remainingSeconds <= 0) {
+      clearInterval(timerHandle);
+      state.remainingSeconds = 0;
+      saveState();
+      submitExam(true); // auto-submit
+    }
+    updateTimerDisplay();
+    saveState();
+  }, 1000);
+  updateTimerDisplay();
+}
+
+function startTimerFromState(){
+  // compute remaining based on elapsed (in case page reloaded)
+  if (!state.startTimestamp) return;
+  const elapsed = Math.floor((Date.now() - state.startTimestamp)/1000);
+  const total = state.durationMin * 60;
+  state.remainingSeconds = Math.max(total - elapsed, 0);
+  if (state.remainingSeconds <= 0) {
+    submitExam(true);
+  } else {
+    startTimer();
+  }
+}
+
+function updateTimerDisplay(){
+  const s = state.remainingSeconds || 0;
+  const mm = String(Math.floor(s/60)).padStart(2,"0");
+  const ss = String(s%60).padStart(2,"0");
+  timerEl.textContent = `${mm}:${ss}`;
+}
+
+/* ----------------------------
+   Question rendering & actions
+   ---------------------------- */
+function renderQuestion(index) {
+  state.currentIndex = ((index % questions.length) + questions.length) % questions.length;
+  const q = questions[state.currentIndex];
+  qCard.innerHTML = "";
+  const header = document.createElement("div");
+  header.innerHTML = `<strong>Question ${state.currentIndex+1} of ${questions.length}:</strong>`;
+  const body = document.createElement("div");
+  body.style.marginTop = "8px";
+  body.innerHTML = `<div style="font-weight:600;margin-bottom:6px">${escapeHtml(q.q)}</div>`;
+  qCard.appendChild(header);
+  qCard.appendChild(body);
+
+  const optWrap = document.createElement("div");
+  optWrap.className = "options";
+
+  // render by type
+  if (q.type === "mcq") {
+    q.choices.forEach((c, i) => {
+      const label = document.createElement("label");
+      label.className = "option";
+      label.innerHTML = `<input type="radio" name="answer" value="${i}"> ${escapeHtml(c)}`;
+      optWrap.appendChild(label);
+    });
+    // restore
+    const saved = state.answers[q.id];
+    if (saved !== undefined) {
+      const sel = optWrap.querySelector(`input[value="${saved}"]`);
+      if (sel) sel.checked = true;
+    }
+    // listen
+    optWrap.querySelectorAll('input[name="answer"]').forEach(inp=>{
+      inp.addEventListener("change", () => {
+        state.answers[q.id] = parseInt(inp.value,10);
+        delete state.review[q.id];
+        renderQuestionMap();
+        renderProgress();
+        saveState();
+      });
+    });
+
+  } else if (q.type === "multi") {
+    q.choices.forEach((c, i) => {
+      const label = document.createElement("label");
+      label.className = "option";
+      label.innerHTML = `<input type="checkbox" name="answerMulti" value="${i}"> ${escapeHtml(c)}`;
+      optWrap.appendChild(label);
+    });
+    const saved = state.answers[q.id] || [];
+    saved.forEach(idx => {
+      const el = optWrap.querySelector(`input[value="${idx}"]`);
+      if (el) el.checked = true;
+    });
+    optWrap.querySelectorAll('input[name="answerMulti"]').forEach(inp=>{
+      inp.addEventListener("change", () => {
+        const checked = Array.from(optWrap.querySelectorAll('input[name="answerMulti"]:checked')).map(n=>parseInt(n.value,10));
+        state.answers[q.id] = checked;
+        delete state.review[q.id];
+        renderQuestionMap();
+        renderProgress();
+        saveState();
+      });
+    });
+
+  } else if (q.type === "text") {
+    const textarea = document.createElement("textarea");
+    textarea.rows = 4;
+    textarea.style.width = "100%";
+    textarea.value = state.answers[q.id] || "";
+    textarea.addEventListener("input", () => {
+      state.answers[q.id] = textarea.value;
+      delete state.review[q.id];
+      renderQuestionMap();
+      renderProgress();
+      saveState();
+    });
+    optWrap.appendChild(textarea);
+  }
+
+  qCard.appendChild(optWrap);
+  updateNavButtons();
+  highlightCurrentMapButton();
+}
+
+/* change question by offset */
+function changeQuestion(offset) {
+  renderQuestion(state.currentIndex + offset);
+}
+
+/* mark for review toggle */
+function toggleMark() {
+  const q = questions[state.currentIndex];
+  if (state.review[q.id]) delete state.review[q.id];
+  else state.review[q.id] = true;
+  renderQuestionMap();
+  saveState();
+}
+
+/* clear answer for current question */
+function clearAnswer() {
+  const q = questions[state.currentIndex];
+  delete state.answers[q.id];
+  delete state.review[q.id];
+  renderQuestion(state.currentIndex);
+  renderQuestionMap();
+  renderProgress();
+  saveState();
+}
+
+/* render question map (small tiles) */
+function renderQuestionMap() {
+  questionMap.innerHTML = "";
+  questions.forEach((q, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "q-btn";
+    btn.textContent = idx+1;
+    btn.title = `Go to question ${idx+1}`;
+    if (state.answers[q.id] !== undefined && state.answers[q.id] !== null) btn.classList.add("answered");
+    if (state.review[q.id]) btn.classList.add("review");
+    btn.addEventListener("click", () => {
+      renderQuestion(idx);
+    });
+    questionMap.appendChild(btn);
+  });
+}
+
+/* highlight current in map */
+function highlightCurrentMapButton(){
+  Array.from(questionMap.children).forEach((b, i) => {
+    b.style.outline = i === state.currentIndex ? "2px solid var(--brand)" : "none";
+  });
+}
+
+/* update progress */
+function renderProgress(){
+  const answeredCount = Object.keys(state.answers).length;
+  progressText.textContent = `${answeredCount} / ${questions.length} answered`;
+}
+
+/* update nav button enabled state */
+function updateNavButtons(){
+  document.getElementById("prevBtn").disabled = (state.currentIndex === 0);
+  document.getElementById("nextBtn").disabled = (state.currentIndex === questions.length-1);
+}
+
+/* ----------------------------
+   Submit & scoring
+   ---------------------------- */
+function submitExam(auto=false) {
+  if (!auto && !confirm("Are you sure you want to submit the exam?")) return;
+  // stop timer & prevent unload
+  if (timerHandle) clearInterval(timerHandle);
+  window.removeEventListener("beforeunload", beforeUnloadHandler);
+
+  // basic scoring (supports MCQ, multi, text)
+  const feedback = [];
+  let score = 0;
+  questions.forEach((q, idx) => {
+    const user = state.answers[q.id];
+    let correct = false;
+    if (q.type === "mcq") {
+      correct = user === q.answerIndex;
+      if (correct) score += 1;
+    } else if (q.type === "multi") {
+      const arr = Array.isArray(user) ? user.slice().sort() : [];
+      const expected = (q.answerIndexes || []).slice().sort();
+      correct = JSON.stringify(arr) === JSON.stringify(expected);
+      if (correct) score += 1;
+    } else if (q.type === "text") {
+      if (typeof user === "string") {
+        correct = user.trim().toLowerCase() === (q.answerText || "").trim().toLowerCase();
+        if (correct) score += 1;
+      }
+    }
+    feedback.push({q, user, correct});
+  });
+
+  // show results
+  examArea.style.display = "none";
+  resultsEl.style.display = "";
+  resultsEl.innerHTML = `<h2>Results</h2>
+    <p>Your score: <strong>${score} / ${questions.length}</strong></p>
+    <div>${feedback.map((f, i)=>renderFeedback(i+1,f)).join("")}</div>
+    <p style="margin-top:12px"><button class="btn" onclick="downloadReport()">Download Report (JSON)</button>
+    <button class="btn secondary" onclick="retake()">Retake</button></p>
+  `;
+  // clear saved state so retake starts fresh (but keep result in memory in case user downloads)
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+/* small helpers for rendering feedback html */
+function renderFeedback(no, f) {
+  const q = f.q;
+  let html = `<div style="padding:10px;border-bottom:1px solid #eee;margin-bottom:8px">
+    <div><strong>Q${no}.</strong> ${escapeHtml(q.q)}</div>
+    <div style="margin-top:6px">Your answer: <span>${formatUserAnswer(q,f.user)}</span></div>
+    <div>Correct answer: <span class="${f.correct ? 'correct' : 'wrong'}">${formatCorrectAnswer(q)}</span> ${f.correct ? '✅' : '❌'}</div>
+  </div>`;
+  return html;
+}
+
+/* format user answer for display */
+function formatUserAnswer(q, user) {
+  if (user === undefined) return "<em>Not answered</em>";
+  if (q.type === "mcq") return escapeHtml(q.choices[user] || user);
+  if (q.type === "multi") return (Array.isArray(user) ? user.map(i=>escapeHtml(q.choices[i]||i)).join(", ") : escapeHtml(String(user)));
+  if (q.type === "text") return escapeHtml(user || "");
+  return escapeHtml(String(user));
+}
+
+/* format correct answer */
+function formatCorrectAnswer(q) {
+  if (q.type === "mcq") return escapeHtml(q.choices[q.answerIndex]);
+  if (q.type === "multi") return (q.answerIndexes||[]).map(i=>escapeHtml(q.choices[i])).join(", ");
+  if (q.type === "text") return escapeHtml(q.answerText);
+  return "";
+}
+
+/* ----------------------------
+   Utility
+   ---------------------------- */
+function escapeHtml(s) {
+  if (s === undefined || s === null) return "";
+  return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" })[c]);
+}
+
+/* prevent accidental leave while exam in progress */
+function beforeUnloadHandler(e) {
+  e.preventDefault();
+  e.returnValue = "";
+}
+
+/* allow downloading JSON report */
+function downloadReport() {
+  const report = {
+    meta: { durationMin: state.durationMin, timestamp: new Date().toISOString() },
+    questions,
+    answers: state.answers
+  };
+  const blob = new Blob([JSON.stringify(report, null, 2)], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "exam_report.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* allow retake by reloading page state */
+function retake() {
+  if (!confirm("Retake exam? This will start a fresh session.")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+/* highlight map after render */
+function highlightCurrentMapButton() {
+  Array.from(questionMap.children).forEach((b, i) => {
+    b.style.boxShadow = i === state.currentIndex ? "0 0 0 3px rgba(11,105,255,0.08)" : "none";
+  });
+}
+
+/* auto render when clicking map buttons - wired above */
+renderQuestionMap();
+renderProgress();
+
+/* End script */
+</script>
+</body>
+</html>
+
